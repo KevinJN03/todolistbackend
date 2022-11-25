@@ -1,18 +1,20 @@
 const { Post, User } = require("../models/index")
 const { Router }= require("express");
+const seed = require("../db/seed");
 
 const postRouter = Router();
 
 // to gather all the post created by a user
-postRouter.get("/", (req, res)=> {
+postRouter.get("/", async (req, res)=> {
+    await seed()
+    res.status(200).send({todo: await Post.findAll() })
 })
 
 
 // route to create a post
 postRouter.post("/", async (req, res)=> {
-const post = Post.create(req.body)
-
-res.send("Todo created")
+await Post.create(req.body)
+res.status(200).send({todo: await Post.findAll() })
 })
 
 
@@ -23,7 +25,7 @@ postRouter.put("/update/:id", async (req,res) => {
     const updatepost = await post.update({
         Text: req.body.Text
     })
-res.send(updatepost)
+res.status(200).send({todo: await Post.findAll() })
 })
 
 // route to delete a post
@@ -33,6 +35,6 @@ postRouter.delete("/delete/:id" ,async (req,res) => {
     
     const deletepost = await post.destroy()
 
-    res.send(deletepost)
+    res.status(200).send({todo: await Post.findAll() })
 })
-module.exports = postRouter;
+module.exports = postRouter; 
